@@ -16,14 +16,20 @@ from .config import settings
 # from sqlalchemy import select
 # from .routers import posts, users, auth
 
-SQLALCHEMY_DATABASE_URL = f'postgresql+psycopg://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}'
+def get_database_url(testing: bool = False) -> str:
+    suffix = "_test" if testing else ""
+    return(
+        f"postgresql+psycopg://{settings.database_username}:"
+        f"{settings.database_password}@{settings.database_hostname}:"
+        f"{settings.database_port}/{settings.database_name}{suffix}"
+    )
+
+SQLALCHEMY_DATABASE_URL = get_database_url()
 
 # postgresql+psycopg://postgres:f4ngyuan@localhost/fastapi'
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
-
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 Base = declarative_base()
 
 def get_db():
